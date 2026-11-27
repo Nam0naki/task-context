@@ -1,10 +1,26 @@
-import { ReactElement } from 'react';
+import { createContext, ReactElement, useContext } from 'react';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark';
+
+const ThemeContext = createContext<Theme | undefined>(undefined);
 
 export function ThemeProvider(props: {
-    theme: Theme;
-    children: ReactElement;
-}) {}
+  theme: Theme;
+  children: ReactElement;
+}) {
+  return (
+    <ThemeContext.Provider value={props.theme}>
+      {props.children}
+    </ThemeContext.Provider>
+  );
+}
 
-export function useTheme(): Theme {}
+export function useTheme(): Theme {
+  const context = useContext(ThemeContext);
+
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+
+  return context;
+}
